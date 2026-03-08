@@ -38,6 +38,7 @@ class PiperDualSlaveReplay(Robot):
         self.sensors["image"]["cam_high"].set_up("323422071854")
 
         self.set_collect_type({
+            "arm": ["joint", "ee_pose", "gripper"],
             "image": ["color"]
         })
 
