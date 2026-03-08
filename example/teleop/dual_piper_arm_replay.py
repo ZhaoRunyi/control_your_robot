@@ -37,6 +37,10 @@ class PiperDualSlaveReplay(Robot):
         # 【请填入D435的真实序列号】
         self.sensors["image"]["cam_high"].set_up("填入D435的真实序列号")
 
+        self.set_collect_type({
+            "image": ["color"]
+        })
+
 def replay_and_record(hdf5_path):
     print(f"Loading data from {hdf5_path}...")
     
