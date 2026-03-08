@@ -44,7 +44,7 @@ class PiperDualTeleop(Robot):
         self.controllers["arm"]["left_arm"].set_up("can0")
         self.controllers["arm"]["right_arm"].set_up("can1")
         # 【请填入D435的真实序列号】可以通过终端输入 rs-enumerate-devices 查看
-        self.sensors["image"]["cam_high"].set_up("填入D435的真实序列号")
+        self.sensors["image"]["cam_high"].set_up("323422071854")
         
         # 记录关节角度和夹爪（注意不要录制具有歧义的qpos(现在已修正为ee_pose)）
         self.set_collect_type({
