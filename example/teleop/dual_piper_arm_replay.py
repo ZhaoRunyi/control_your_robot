@@ -42,6 +42,15 @@ class PiperDualSlaveReplay(Robot):
             "image": ["color"]
         })
 
+def decode_image(img_data):
+    if isinstance(img_data, (bytes, np.bytes_)):
+        return cv2.imdecode(np.frombuffer(img_data, np.uint8), cv2.IMREAD_COLOR)
+    elif isinstance(img_data, np.ndarray) and len(img_data.shape) == 1:
+        return cv2.imdecode(np.frombuffer(img_data, np.uint8), cv2.IMREAD_COLOR)
+    elif isinstance(img_data, np.ndarray) and len(img_data.shape) == 3:
+        return cv2.cvtColor(img_data, cv2.COLOR_RGB2BGR)
+    return img_data
+
 def replay_and_record(hdf5_path):
     print(f"Loading data from {hdf5_path}...")
     
@@ -59,11 +68,7 @@ def replay_and_record(hdf5_path):
         fps = 30.0
         
         # 探测第一张图的分辨率以初始化 VideoWriter
-        img0_bytes = orig_images[0]
-        if isinstance(img0_bytes, (bytes, np.bytes_)):
-            img0 = cv2.imdecode(np.frombuffer(img0_bytes, np.uint8), cv2.IMREAD_COLOR)
-        else:
-            img0 = img0_bytes
+        img0 = decode_image(orig_images[0])
             
         h, w, c = img0.shape
         out_w = w * 2  # 水平拼接
@@ -90,16 +95,10 @@ def replay_and_record(hdf5_path):
             # --- b. 获取当前相机画面 ---
             current_data = robot.get()
             live_img = current_data[1]["cam_high"]["color"]
-            
-            if isinstance(live_img, bytes):
-                live_img = cv2.imdecode(np.frombuffer(live_img, np.uint8), cv2.IMREAD_COLOR)
+            live_img = decode_image(live_img)
             
             # --- c. 解码历史画面 ---
-            orig_img_data = orig_images[i]
-            if isinstance(orig_img_data, (bytes, np.bytes_)) or str(orig_img_data.dtype) == '|S1' or orig_images.dtype == np.uint8:
-                orig_img = cv2.imdecode(np.frombuffer(orig_img_data, np.uint8), cv2.IMREAD_COLOR)
-            else:
-                orig_img = orig_img_data
+            orig_img = decode_image(orig_images[i])
                 
             # --- d. 拼接并写入视频 ---
             live_img = cv2.resize(live_img, (w, h))
