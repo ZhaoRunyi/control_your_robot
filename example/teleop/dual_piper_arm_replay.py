@@ -35,7 +35,7 @@ class PiperDualSlaveReplay(Robot):
         self.controllers["arm"]["left_arm"].set_up("can0") 
         self.controllers["arm"]["right_arm"].set_up("can1")
         # 【请填入D435的真实序列号】
-        self.sensors["image"]["cam_high"].set_up("填入D435的真实序列号")
+        self.sensors["image"]["cam_high"].set_up("323422071854")
 
         self.set_collect_type({
             "image": ["color"]
