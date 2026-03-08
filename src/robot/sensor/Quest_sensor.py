@@ -44,7 +44,7 @@ class QuestSensor(TeleoperationSensor):
         
         self.sensor = OculusReader()
 
-        self.prev_qpos = None
+        self.prev_ee_pose = None
 
     def get_state(self):
         transformations, buttons = self.sensor.get_transformations_and_buttons()
@@ -54,17 +54,17 @@ class QuestSensor(TeleoperationSensor):
         right_pose = matrix_to_xyz_rpy(adjustment_matrix(transformations['r']))
         left_pose = matrix_to_xyz_rpy(adjustment_matrix(transformations['l']))
         
-        qpos = [left_pose, right_pose]
-        if self.prev_qpos is None:
-            self.prev_qpos = qpos
-            qpos = [np.array([0,0,0,0,0,0]), np.array([0,0,0,0,0,0])]
+        ee_pose = [left_pose, right_pose]
+        if self.prev_ee_pose is None:
+            self.prev_ee_pose = ee_pose
+            ee_pose = [np.array([0,0,0,0,0,0]), np.array([0,0,0,0,0,0])]
         else:
-            qpos[0], qpos[1] = compute_local_delta_pose(self.prev_qpos[0], qpos[0]), compute_local_delta_pose(self.prev_qpos[1], qpos[1])
-        
-        qpos[0], qpos[1] = compute_rotate_matrix(qpos[0]), compute_rotate_matrix(qpos[1])
-        qpos =  np.concatenate(qpos)
+            ee_pose[0], ee_pose[1] = compute_local_delta_pose(self.prev_ee_pose[0], ee_pose[0]), compute_local_delta_pose(self.prev_ee_pose[1], ee_pose[1])
+            
+        ee_pose[0], ee_pose[1] = compute_rotate_matrix(ee_pose[0]), compute_rotate_matrix(ee_pose[1])
+        ee_pose =  np.concatenate(ee_pose)
         return {
-            "end_pose":qpos,
+            "end_pose":ee_pose,
             "extra": buttons,
         }
 

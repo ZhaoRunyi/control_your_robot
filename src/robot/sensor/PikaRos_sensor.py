@@ -34,28 +34,28 @@ class PikaRosSensor(TeleoperationSensor):
             "gripper_subscriber":self.gripper_subscriber,
         }
 
-        self.prev_qpos = None
+        self.prev_ee_pose = None
 
     def get_state(self):
         pos_msg = self.sensor["pos_subscriber"].get_latest_data()
         if pos_msg is None:
-            qpos = None
+            ee_pose = None
             debug_print(f"{self.name}", f"getting message pose from pika error!", "ERROR")
         else:
             roll, pitch, yaw = R.from_quat([pos_msg.pose.orientation.x,pos_msg.pose.orientation.y, \
                                             pos_msg.pose.orientation.z,pos_msg.pose.orientation.w]).as_euler('xyz')
-            qpos = np.array([pos_msg.pose.position.x,
+            ee_pose = np.array([pos_msg.pose.position.x,
                     pos_msg.pose.position.y,
                     pos_msg.pose.position.z,
                     roll,
                     pitch,
                     yaw,])
 
-        if self.prev_qpos is None:
-            self.prev_qpos = qpos
-            qpos = np.array([0,0,0,0,0,0])
+        if self.prev_ee_pose is None:
+            self.prev_ee_pose = ee_pose
+            ee_pose = np.array([0,0,0,0,0,0])
         else:
-            qpos = compute_local_delta_pose(self.prev_qpos, qpos)
+            ee_pose = compute_local_delta_pose(self.prev_ee_pose, ee_pose)
         
         gripper_msg = self.sensor["gripper_subscriber"].get_latest_data()
         if gripper_msg is None:
@@ -65,9 +65,9 @@ class PikaRosSensor(TeleoperationSensor):
         # 归一化
             gripper = (np.array([gripper_msg.position])[0] - 0.3) / 1.7
 
-        qpos = compute_rotate_matrix(qpos)
+        ee_pose = compute_rotate_matrix(ee_pose)
         return {
-            "end_pose":qpos,
+            "end_pose":ee_pose,
             "gripper":gripper
         }
 
@@ -75,14 +75,14 @@ class PikaRosSensor(TeleoperationSensor):
         pos_msg = self.sensor["pos_subscriber"].get_latest_data()
         roll, pitch, yaw = R.from_quat([pos_msg.pose.orientation.x,pos_msg.pose.orientation.y, \
                                             pos_msg.pose.orientation.z,pos_msg.pose.orientation.w]).as_euler('xyz')
-        qpos = np.array([pos_msg.pose.position.x,
+        ee_pose = np.array([pos_msg.pose.position.x,
                 pos_msg.pose.position.y,
                 pos_msg.pose.position.z,
                 roll,
                 pitch,
                 yaw,])
         
-        self.prev_qpos = qpos
+        self.prev_ee_pose = ee_pose
         debug_print(f"{self.name}", "reset success!", "INFO")
 
 if __name__ == "__main__":

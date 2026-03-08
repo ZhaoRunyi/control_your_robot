@@ -27,21 +27,21 @@ class PikaSensor(TeleoperationSensor):
         有线连接: T20, T21
         '''
         self.sensor = sense(tty)
-        self.prev_qpos = None
+        self.prev_ee_pose = None
         self.device_name = device_name
 
     def get_state(self):
-        qpos = self.sensor.get_pose(self.device_name)
+        ee_pose = self.sensor.get_pose(self.device_name)
         # gripper = self.sensor.get_encoder_data()['rad'] / np.pi
-        if self.prev_qpos is None:
-            self.prev_qpos = qpos
-            qpos = np.array([0,0,0,0,0,0])
+        if self.prev_ee_pose is None:
+            self.prev_ee_pose = ee_pose
+            ee_pose = np.array([0,0,0,0,0,0])
         else:
-            qpos = compute_local_delta_pose(self.prev_qpos, qpos)
+            ee_pose = compute_local_delta_pose(self.prev_ee_pose, ee_pose)
 
-        qpos = compute_rotate_matrix(qpos)
+        ee_pose = compute_rotate_matrix(ee_pose)
         return {
-            "end_pose":qpos,
+            "end_pose":ee_pose,
             # "extra": gripper,
         }
 
