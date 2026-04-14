@@ -27,9 +27,6 @@ class TestRobot(Robot):
             "arm": {
                 "left_arm": TestArmController("left_arm",DoFs=self.DoFs,INFO=self.INFO),
                 "right_arm": TestArmController("right_arm",DoFs=self.DoFs,INFO=self.INFO),
-            },
-            "mobile": {
-                "test_mobile": TestMobileController("test_mobile",INFO=self.INFO),
             }
         }
         self.sensors = {
@@ -104,10 +101,10 @@ if __name__ == "__main__":
     }
     robot.move(move_data)
 
-    move_data = {
-        "mobile":{
-            "test_mobile":{
-                "move_to":np.random.rand(6) * 3.1515926
-            },
-        }
-    }
+    # move_data = {
+    #     "mobile":{
+    #         "test_mobile":{
+    #             "move_to":np.random.rand(6) * 3.1515926
+    #         },
+    #     }
+    # }

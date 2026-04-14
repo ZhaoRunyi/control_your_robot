@@ -40,6 +40,15 @@ map = {
     "action": ["left_arm.joint","left_arm.gripper","right_arm.joint","right_arm.gripper"],
 }
 
+# FOR OUR SETTING:
+map = {
+    "cam_high": "slave_cam_high.color",
+    "cam_left_wrist": "slave_cam_left.color",
+    "cam_right_wrist": "slave_cam_high.color",
+    "qpos": ["slave_left_arm.joint", "slave_left_arm.ee_pose", "slave_left_arm.gripper","slave_right_arm.joint", "slave_right_arm.ee_pose", "slave_right_arm.gripper"],
+    "action": ["slave_left_arm.joint", "slave_left_arm.ee_pose", "slave_left_arm.gripper","slave_right_arm.joint", "slave_right_arm.ee_pose", "slave_right_arm.gripper"],
+}
+
 def images_encoding(imgs):
     encode_data = []
     padded_data = []

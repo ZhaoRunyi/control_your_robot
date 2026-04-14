@@ -2,12 +2,13 @@
 from cgi import test
 import math
 
-
+import sys
 import os
 current_script_path = os.path.abspath(__file__)
 project_root = os.path.dirname(os.path.dirname(current_script_path))
 dr_path = os.path.join(project_root, "third_party", "dr")
 sys.path.insert(0, dr_path)  
+sys.path.insert(0, "/home/galen/SLAI_data_ws/control_your_robot")
 
 from robot.controller.arm_controller import ArmController
 import numpy as np

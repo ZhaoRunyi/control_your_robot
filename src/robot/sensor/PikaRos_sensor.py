@@ -1,9 +1,10 @@
-
+import sys
+sys.path.insert(0, "/home/galen/SLAI_data_ws/control_your_robot/src")
 
 import numpy as np
 
 from robot.sensor.teleoperation_sensor import TeleoperationSensor
-from robot.utils.ros_subscriber import ROSSubscriber 
+from robot.utils.ros.ros_subscriber import ROSSubscriber
 from robot.utils.base.data_handler import apply_local_offset_to_global_pose, compute_local_delta_pose, debug_print, compute_rotate_matrix
 
 from geometry_msgs.msg import PoseStamped

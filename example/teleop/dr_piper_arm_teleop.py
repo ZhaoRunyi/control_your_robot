@@ -1,3 +1,4 @@
+import sys
 from re import S, T
 
 from h5py._hl.dataset import sel
@@ -57,7 +58,7 @@ class MasterWorker(Worker):
 
     def component_init(self):
         self.component = DrAlohaController(name="arm")
-        self.component.set_up(com="/dev/ttyACM1")
+        self.component.set_up(com="can0")
         self.component.set_collect_info(["joint","gripper"])
 
         self.component.apply_calibration()

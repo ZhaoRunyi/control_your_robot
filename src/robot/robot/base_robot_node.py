@@ -124,8 +124,8 @@ def build_map(sensor_nodes, controller_nodes):
 
 def build_robot_node(base_robot_cls):
     class RobotNode(base_robot_cls):
-        def __init__(self, base_config):
-            super().__init__(base_config=base_config)
+        def __init__(self, condition):
+            super().__init__(condition=condition)
             self.name = self.name + "_node"
         
         def set_up(self, teleop=False):

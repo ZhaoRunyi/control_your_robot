@@ -1,4 +1,5 @@
-
+# import sys
+# sys.path.insert(0, "/home/galen/SLAI_data_ws/control_your_robot")
 
 import numpy as np
 
@@ -6,7 +7,7 @@ from robot.robot.base_robot import Robot
 
 from robot.controller.Piper_controller import PiperController
 from robot.sensor.Realsense_sensor import RealsenseSensor
-from control_your_robot.sensor.PikaRos_sensor import PikaRosSensor
+from robot.sensor.PikaRos_sensor import PikaRosSensor
 
 from robot.data.collect_any import CollectAny
 
