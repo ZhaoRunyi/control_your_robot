@@ -18,6 +18,11 @@ class RealsenseSensor(VisionSensor):
     def __init__(self, name):
         super().__init__()
         self.name = name
+        self.pipeline = None
+        self.config = None
+        self.context = None
+        self.devices = []
+        self._pipeline_started = False
     
     def set_up(self,CAMERA_SERIAL,is_depth = False, is_jpeg=False):
         self.is_depth = is_depth
@@ -51,6 +56,7 @@ class RealsenseSensor(VisionSensor):
             # Start streaming
             try:
                 self.pipeline.start(self.config)
+                self._pipeline_started = True
                 print(f"Started camera: {self.name} (SN: {serial})")
             except RuntimeError as e:
                 raise RuntimeError(f"Error starting camera: {str(e)}")
@@ -85,8 +91,9 @@ class RealsenseSensor(VisionSensor):
 
     def cleanup(self):
         try:
-            if hasattr(self, 'pipeline'):
+            if self.pipeline is not None and self._pipeline_started:
                 self.pipeline.stop()
+                self._pipeline_started = False
         except Exception as e:
             print(f"Error during cleanup: {str(e)}")
 

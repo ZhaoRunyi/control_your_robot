@@ -1,0 +1,12 @@
+{
+  "output_path": "/home/edemlab/challenge_ws/control_your_robot/calib/default_tag_a4.png",
+  "dictionary_name": "DICT_APRILTAG_36h11",
+  "marker_id": 0,
+  "tag_size_mm": 100.0,
+  "dpi": 300,
+  "a4_size_px": [
+    2480,
+    3508
+  ],
+  "marker_size_px": 1181
+}
