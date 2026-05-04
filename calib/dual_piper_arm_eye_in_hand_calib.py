@@ -59,12 +59,21 @@ WINDOW_NAME = "Dual Piper Eye-In-Hand Calibration"
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Dual Piper wrist camera eye-in-hand calibration")
     parser.add_argument(
+        "run_dir",
+        nargs="?",
+        default=None,
+        help=(
+            "existing run directory to recompute in offline mode; "
+            "accepts an absolute path, a cwd-relative path, or a bare run directory name under calib/runs"
+        ),
+    )
+    parser.add_argument(
         "--offline-run-dir",
         type=str,
         default=None,
         help=(
-            "skip robot/camera IO and recompute calibration from an existing run directory; "
-            "accepts an absolute path, a cwd-relative path, or a bare run directory name under calib/runs"
+            "deprecated alias for the positional run_dir argument; "
+            "skip robot/camera IO and recompute calibration from an existing run directory"
         ),
     )
     parser.add_argument("--left_cam_serial", type=str, default="344322073012")
@@ -97,6 +106,18 @@ def wrist_camera_name_for_arm(arm_name: str) -> str:
     if arm_name == "right_arm":
         return "right"
     raise ValueError(f"unsupported arm name: {arm_name}")
+
+
+def to_jsonable(value: Any) -> Any:
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, dict):
+        return {str(key): to_jsonable(inner_value) for key, inner_value in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [to_jsonable(inner_value) for inner_value in value]
+    return value
 
 
 def build_preview_lines(
@@ -302,7 +323,7 @@ def save_calibration_outputs(
             "camera_matrix": matrix_to_rounded_nested_list(intrinsics["camera_matrix"], decimals=decimals),
         },
         "best_metrics": {
-            key: value
+            key: to_jsonable(value)
             for key, value in best_result.items()
             if key
             not in {
@@ -350,7 +371,7 @@ def save_calibration_outputs(
             "tag_in_base_rotation_rmse_deg": method_result["tag_in_base_rotation_rmse_deg"],
             "tag_in_base_rotation_max_deg": method_result["tag_in_base_rotation_max_deg"],
         }
-    save_json(run_dir / "calibration_result.json", json_payload)
+    save_json(run_dir / "calibration_result.json", to_jsonable(json_payload))
 
 
 def finalize_calibration_run(
@@ -451,7 +472,9 @@ def run_offline_calibration(args: argparse.Namespace) -> int:
 
 def main() -> int:
     args = parse_args()
-    if args.offline_run_dir:
+    offline_run_dir = args.offline_run_dir or args.run_dir
+    if offline_run_dir:
+        args.offline_run_dir = offline_run_dir
         return run_offline_calibration(args)
 
     arm_name = prompt_for_arm()
